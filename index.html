@@ -79,11 +79,22 @@
         .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4); }
         .btn-gradient:active { transform: translateY(0); }
         
-        /* --- Fullscreen Gallery Viewer --- */
-        .fullscreen-viewer { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
+        /* --- Fullscreen Gallery Viewer & Teleport Animations --- */
+        .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
         .fullscreen-viewer.active { display: flex; opacity: 1; }
-        .fullscreen-content { width: 100%; height: 100%; object-fit: contain; background: #000; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease; }
-        .fullscreen-content.disappearing { transform: scale(0.05) translateY(-300px); opacity: 0; filter: blur(15px); }
+        
+        .fullscreen-content { width: 100%; height: 100%; object-fit: contain; background: transparent; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, opacity 0.5s ease; }
+        
+        /* Smooth Teleport / Warp Animation (Sender Out) */
+        .fullscreen-content.teleport-out { transform: scale(0.02) translateY(-400px) rotate(15deg); opacity: 0; filter: blur(20px) brightness(3); }
+        
+        /* Smooth Teleport / Warp Animation (Receiver In) */
+        .fullscreen-content.teleport-in { animation: teleportInEffect 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes teleportInEffect {
+            0% { transform: scale(0.02) translateY(400px) rotate(-15deg); opacity: 0; filter: blur(20px) brightness(3); }
+            100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; filter: blur(0) brightness(1); }
+        }
+
         .fullscreen-content.sci-fi-drop { animation: pulseGlowViewer 2s infinite alternate; }
 
         @keyframes pulseGlowViewer {
@@ -109,11 +120,15 @@
         #webcam { position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
         /* --- Receiver Fullscreen Sci-Fi HUD ("DROP HERE") --- */
-        .scifi-hud { position: fixed; inset: 0; background: rgba(11, 17, 32, 0.9); backdrop-filter: blur(20px); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .scifi-hud { position: fixed; inset: 0; background: rgba(11, 17, 32, 0.92); backdrop-filter: blur(20px); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .scifi-hud.active { display: flex; opacity: 1; }
-        .drop-target-box { width: 340px; height: 340px; border: 3px dashed var(--accent-solid); border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: rgba(99, 102, 241, 0.05); box-shadow: 0 0 60px rgba(99, 102, 241, 0.25); animation: borderPulse 2s infinite; }
+        .drop-target-box { width: 360px; height: 360px; border: 3px dashed var(--accent-solid); border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: rgba(99, 102, 241, 0.05); box-shadow: 0 0 60px rgba(99, 102, 241, 0.25); animation: borderPulse 2s infinite; padding: 20px; position: relative; }
         .drop-target-box h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
         .drop-target-box p { color: var(--text-muted); font-size: 0.95rem; max-width: 260px; line-height: 1.4; }
+
+        /* Loading Spinner for Receiving */
+        .hud-spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @keyframes borderPulse {
             0% { border-color: rgba(99, 102, 241, 0.4); transform: scale(1); }
@@ -171,8 +186,9 @@
     <!-- Receiver Fullscreen Sci-Fi HUD ("DROP HERE") -->
     <div class="scifi-hud" id="scifi-hud">
         <div class="drop-target-box">
-            <h2 class="gradient-text">DROP HERE</h2>
-            <p>Open your palm completely to catch the incoming transmission</p>
+            <div class="hud-spinner" id="hud-spinner"></div>
+            <h2 class="gradient-text" id="hud-title">DROP HERE</h2>
+            <p id="hud-desc">Open your palm completely to catch the incoming transmission</p>
         </div>
     </div>
 
@@ -326,6 +342,10 @@
     let isReceiving = false;
     let cameraActive = false;
     let cameraStream = null;
+    
+    // Stability & Debounce Counters to fix gesture inconsistency
+    let consecutiveFistFrames = 0;
+    let consecutivePalmFrames = 0;
     let isProcessingGesture = false;
     let lastProcessTime = 0;
     let incomingPayloadBuffer = null;
@@ -341,6 +361,9 @@
     const flashScreen = document.getElementById('flash');
     const videoElement = document.getElementById('webcam');
     const sciFiHud = document.getElementById('scifi-hud');
+    const hudSpinner = document.getElementById('hud-spinner');
+    const hudTitle = document.getElementById('hud-title');
+    const hudDesc = document.getElementById('hud-desc');
     
     const fullscreenViewer = document.getElementById('fullscreen-viewer');
     const fsImgPreview = document.getElementById('fs-img-preview');
@@ -352,14 +375,13 @@
     const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
     hands.setOptions({ 
         maxNumHands: 1, 
-        modelComplexity: 1, // Increased model complexity for ultra-smooth tracking
-        minDetectionConfidence: 0.8, // Raised thresholds to make detection flawless
-        minTrackingConfidence: 0.8 
+        modelComplexity: 1, 
+        minDetectionConfidence: 0.75, 
+        minTrackingConfidence: 0.75 
     });
 
     hands.onResults((results) => {
-        isProcessingGesture = false;
-        if (!cameraActive) return;
+        if (!cameraActive || isProcessingGesture) return;
 
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const l = results.multiHandLandmarks[0];
@@ -371,16 +393,30 @@
             if(isFingerExtended(l[16], l[14], wrist)) openFingers++;
             if(isFingerExtended(l[20], l[18], wrist)) openFingers++;
 
-            // Sender Trigger: Fist gesture (0 or 1 finger extended)
-            if (!isReceiving && payloadToTransfer && openFingers <= 1 && !isProcessingGesture) {
-                isProcessingGesture = true;
-                triggerTransferOut();
+            // Sender Trigger: Fist gesture requirement stabilized over 2 consecutive frames
+            if (!isReceiving && payloadToTransfer && openFingers <= 1) {
+                consecutiveFistFrames++;
+                consecutivePalmFrames = 0;
+                if (consecutiveFistFrames >= 2) {
+                    isProcessingGesture = true;
+                    consecutiveFistFrames = 0;
+                    triggerTransferOut();
+                }
+            } else if (!isReceiving) {
+                consecutiveFistFrames = 0;
             }
             
-            // Receiver Trigger: Open Palm drop acceptance (3 or 4 fingers extended strictly)
-            if (isReceiving && incomingPayloadBuffer && openFingers >= 3 && !isProcessingGesture) {
-                isProcessingGesture = true;
-                triggerTransferIn();
+            // Receiver Trigger: Open Palm drop acceptance requirement stabilized over 2 consecutive frames
+            if (isReceiving && incomingPayloadBuffer && openFingers >= 3) {
+                consecutivePalmFrames++;
+                consecutiveFistFrames = 0;
+                if (consecutivePalmFrames >= 2) {
+                    isProcessingGesture = true;
+                    consecutivePalmFrames = 0;
+                    triggerTransferIn();
+                }
+            } else if (isReceiving) {
+                consecutivePalmFrames = 0;
             }
         }
     });
@@ -388,7 +424,7 @@
     async function trackingLoop(timestamp) {
         if (!cameraActive) return;
         
-        if (timestamp - lastProcessTime > 25 && videoElement.readyState >= 2) {
+        if (timestamp - lastProcessTime > 30 && videoElement.readyState >= 2) {
             lastProcessTime = timestamp;
             try {
                 await hands.send({ image: videoElement });
@@ -411,8 +447,13 @@
 
         isReceiving = receivingMode;
         isProcessingGesture = false;
+        consecutiveFistFrames = 0;
+        consecutivePalmFrames = 0;
 
         if (isReceiving) {
+            hudSpinner.style.display = 'none';
+            hudTitle.innerText = "DROP HERE";
+            hudDesc.innerText = "Open your palm completely to catch the incoming transmission";
             sciFiHud.classList.add('active');
         }
 
@@ -434,6 +475,8 @@
     function stopStealthCamera() {
         cameraActive = false;
         isProcessingGesture = false;
+        consecutiveFistFrames = 0;
+        consecutivePalmFrames = 0;
         sciFiHud.classList.remove('active');
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
@@ -541,10 +584,9 @@
 
         conn.on('data', async (data) => {
             if (data.type === 'READY_TO_DROP') {
-                incomingPayloadBuffer = data; // Buffer metadata waiting for open palm drop
-                startStealthCamera(true); // Open receiver camera HUD mode safely
+                incomingPayloadBuffer = data; 
+                startStealthCamera(true); // Persistently open receiver HUD waiting for open palm
             } else if (data.type === 'REQUEST_PAYLOAD') {
-                // Sender responds to receiver's open palm drop request by sending actual file data serialized as ArrayBuffer
                 if (pendingPayload) {
                     const arrayBuffer = await pendingPayload.data.arrayBuffer();
                     conn.send({ 
@@ -557,7 +599,6 @@
                     pendingPayload = null;
                 }
             } else if (data.type === 'FULL_PAYLOAD') {
-                // Receiver receives actual file payload bytes after performing drop gesture
                 incomingPayloadBuffer = data;
                 executeReceive();
             }
@@ -575,16 +616,15 @@
     function triggerTransferOut() {
         if (conn && conn.open && payloadToTransfer) {
             pendingPayload = payloadToTransfer;
-            // Send metadata/ready signal first so file data isn't received prematurely
             conn.send({ type: 'READY_TO_DROP', name: payloadToTransfer.name, fileType: payloadToTransfer.type });
             
             const activePrev = fsVidPreview.style.display === 'block' ? fsVidPreview : fsImgPreview;
-            activePrev.classList.add('disappearing');
+            activePrev.classList.add('teleport-out');
             flashScreen.classList.add('active');
 
             setTimeout(() => flashScreen.classList.remove('active'), 200);
             setTimeout(() => {
-                activePrev.classList.remove('disappearing');
+                activePrev.classList.remove('teleport-out');
                 closeFullscreenViewer();
                 stopStealthCamera();
             }, 600);
@@ -593,15 +633,15 @@
 
     function triggerTransferIn() {
         if (incomingPayloadBuffer && isReceiving) {
-            sciFiHud.classList.remove('active');
+            // Show loading animation inside HUD while fetching binary file payload
+            hudSpinner.style.display = 'block';
+            hudTitle.innerText = "RECEIVING...";
+            hudDesc.innerText = "Downloading transferred file securely...";
+
             flashScreen.classList.add('active');
-            
-            // Request the actual binary file payload from sender upon opening palm
             conn.send({ type: 'REQUEST_PAYLOAD' });
 
             setTimeout(() => flashScreen.classList.remove('active'), 200);
-            isReceiving = false;
-            stopStealthCamera();
         }
     }
 
@@ -615,11 +655,13 @@
         payloadToTransfer = incomingPayloadBuffer;
         incomingPayloadBuffer = null;
 
+        stopStealthCamera();
         openFullscreenViewer(dropUrl, payloadToTransfer.fileType);
+        
         const activePrev = payloadToTransfer.fileType.startsWith('video/') ? fsVidPreview : fsImgPreview;
-        activePrev.classList.add('sci-fi-drop');
+        activePrev.classList.add('teleport-in');
 
-        // Auto-trigger client download for convenience
+        // Auto-trigger client download
         const a = document.createElement('a');
         a.href = dropUrl;
         a.download = payloadToTransfer.name || 'airgrab_payload';
@@ -629,8 +671,8 @@
 
         setTimeout(() => {
             flashScreen.classList.remove('active');
-            activePrev.classList.remove('sci-fi-drop');
-        }, 400);
+            activePrev.classList.remove('teleport-in');
+        }, 700);
     }
 </script>
 </body>
