@@ -101,16 +101,28 @@
         .btn-gradient { background: var(--accent-gradient); color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25); }
         .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4); }
         
-        /* --- Fullscreen Gallery Viewer & Teleport Animations --- */
-        .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
+        /* --- Fullscreen Gallery Viewer & Ultra-Cool Teleport Animations --- */
+        .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; overflow: hidden; }
         .fullscreen-viewer.active { display: flex; opacity: 1; }
         
-        .fullscreen-content { width: 100%; height: 100%; object-fit: contain; background: transparent; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, opacity 0.5s ease; }
-        
-        .fullscreen-content.teleport-out { transform: scale(0.02) translateY(-400px) rotate(15deg); opacity: 0; filter: blur(20px) brightness(3); }
-        .fullscreen-content.teleport-in { animation: teleportInEffect 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes teleportInEffect {
-            0% { transform: scale(0.02) translateY(400px) rotate(-15deg); opacity: 0; filter: blur(20px) brightness(3); }
+        /* Multi-file preview container stack/grid */
+        .preview-grid { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: center; max-width: 90vw; max-height: 90vh; overflow-y: auto; padding: 20px; }
+        .preview-item-card { position: relative; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 10px; max-width: 320px; max-height: 380px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .preview-item-card img, .preview-item-card video { width: 100%; max-height: 260px; object-fit: contain; border-radius: 10px; background: #000; }
+        .preview-item-name { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; text-align: center; }
+
+        /* Ultra Cool Warp & Vortex Animations */
+        .preview-grid.teleport-out { animation: warpSpeedOut 0.7s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
+        @keyframes warpSpeedOut {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0) brightness(1); }
+            40% { transform: scale(1.3) rotate(-5deg); filter: blur(2px) brightness(1.8) contrast(1.5); }
+            100% { transform: scale(0.01) translateY(-600px) rotate(45deg); opacity: 0; filter: blur(25px) brightness(4); }
+        }
+
+        .preview-grid.teleport-in { animation: vortexPortalIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes vortexPortalIn {
+            0% { transform: scale(0.02) translateY(600px) rotate(-60deg); opacity: 0; filter: blur(30px) brightness(4); }
+            70% { transform: scale(1.05) rotate(3deg); opacity: 1; filter: blur(2px) brightness(1.2); }
             100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; filter: blur(0) brightness(1); }
         }
 
@@ -120,8 +132,8 @@
         /* --- Fully Hidden Stealth Webcam Background Tracker --- */
         #webcam { position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
-        .flash-overlay { position: fixed; inset: 0; background: white; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-        .flash-overlay.active { opacity: 0.85; }
+        .flash-overlay { position: fixed; inset: 0; background: radial-gradient(circle, #ffffff 0%, #a855f7 50%, #6366f1 100%); z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.25s ease-in-out; }
+        .flash-overlay.active { opacity: 0.9; }
 
         /* Notification Modal for Incoming Requests / Invites */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; }
@@ -170,11 +182,10 @@
         </div>
     </div>
 
-    <!-- Fullscreen Gallery Viewer Modal -->
+    <!-- Fullscreen Gallery Viewer Modal for Multiple Files -->
     <div class="fullscreen-viewer" id="fullscreen-viewer">
         <button class="close-viewer-btn" onclick="closeFullscreenViewer()">✕</button>
-        <img id="fs-img-preview" class="fullscreen-content" style="display:none;" alt="Fullscreen Preview">
-        <video id="fs-vid-preview" class="fullscreen-content" style="display:none;" controls autoplay loop muted></video>
+        <div class="preview-grid" id="preview-grid-container"></div>
     </div>
 
     <div class="container">
@@ -200,7 +211,7 @@
 
             <div class="hero-section">
                 <h2>Files move<br>with <span class="gradient-text">your friends.</span></h2>
-                <p>Pair once permanently. No codes, no servers, no scanning—just open your site, grab an asset, and throw it directly to your connected friends.</p>
+                <p>Pair once permanently. No codes, no servers, no scanning—just select multiple files, grab, and throw them directly in a warp vortex!</p>
             </div>
 
             <div class="features-row">
@@ -268,22 +279,22 @@
                 <div class="home-notification-banner" id="home-notification-banner">
                     <div class="home-notification-content">
                         <span>Incoming Broadcast</span>
-                        <span id="home-notification-text">one friend has grabbed image,image can be transferred here</span>
+                        <span id="home-notification-text">Friend has grabbed multiple files, ready to catch</span>
                     </div>
-                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch File</button>
+                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch Files</button>
                 </div>
 
                 <!-- Upload Card -->
                 <div class="upload-card">
                     <div id="upload-content">
                         <svg class="upload-icon" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <h3>Select Asset to Throw</h3>
-                        <p>Choose an image or video to dispatch to your active room / friends</p>
+                        <h3>Select Multiple Assets to Throw</h3>
+                        <p>Choose one or multiple images/videos to dispatch together</p>
                         <button class="btn-gradient" onclick="document.getElementById('file-picker').click()">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"></path></svg>
-                            Choose File
+                            Choose Files
                         </button>
-                        <input type="file" id="file-picker" accept="image/*,video/*" style="display:none" onchange="handleFileSelect(event)">
+                        <input type="file" id="file-picker" accept="image/*,video/*" multiple style="display:none" onchange="handleFileSelect(event)">
                     </div>
                 </div>
 
@@ -304,9 +315,9 @@
     let roomPeers = new Set();  
     
     let peer = null;
-    let payloadToTransfer = null; 
-    let pendingPayload = null;
-    let currentObjectUrl = null; 
+    let payloadsToTransfer = []; // Array for multiple files
+    let pendingPayloads = null;
+    let objectUrls = []; 
     let isReceiving = false;
     let cameraActive = false;
     let cameraStream = null;
@@ -316,7 +327,7 @@
     let consecutivePalmFrames = 0;
     let isProcessingGesture = false;
     let lastProcessTime = 0;
-    let incomingPayloadBuffer = null;
+    let incomingPayloadsBuffer = null;
 
     let pendingModalCallback = null;
 
@@ -332,8 +343,7 @@
     const videoElement = document.getElementById('webcam');
     
     const fullscreenViewer = document.getElementById('fullscreen-viewer');
-    const fsImgPreview = document.getElementById('fs-img-preview');
-    const fsVidPreview = document.getElementById('fs-vid-preview');
+    const previewGridContainer = document.getElementById('preview-grid-container');
 
     const popupModal = document.getElementById('popup-modal');
     const modalTitle = document.getElementById('modal-title');
@@ -426,29 +436,32 @@
             } else if (data.type === 'ROOM_JOINED') {
                 roomPeers.add(data.from);
                 updateRoomUI();
-            } else if (data.type === 'READY_TO_DROP') {
-                // Automatically update or switch to incoming receiving mode for the new image broadcast
-                incomingPayloadBuffer = data;
-                incomingPayloadBuffer.from = conn.peer;
+            } else if (data.type === 'READY_TO_DROP_MULTI') {
+                incomingPayloadsBuffer = data;
+                incomingPayloadsBuffer.from = conn.peer;
                 
                 homeNotificationBanner.classList.add('active');
+                document.getElementById('home-notification-text').innerText = `Friend shared ${data.filesCount || 'multiple'} files, ready to catch!`;
                 startStealthCamera(true); 
-            } else if (data.type === 'REQUEST_PAYLOAD') {
-                if (pendingPayload) {
-                    pendingPayload.data.arrayBuffer().then(buf => {
+            } else if (data.type === 'REQUEST_PAYLOAD_MULTI') {
+                if (pendingPayloads && pendingPayloads.length > 0) {
+                    Promise.all(pendingPayloads.map(p => p.data.arrayBuffer())).then(buffers => {
+                        const payloadPackets = pendingPayloads.map((p, idx) => ({
+                            buffer: buffers[idx],
+                            name: p.name,
+                            fileType: p.type
+                        }));
                         conn.send({
-                            type: 'FULL_PAYLOAD',
-                            buffer: buf,
-                            name: pendingPayload.name,
-                            fileType: pendingPayload.type
+                            type: 'FULL_PAYLOAD_MULTI',
+                            files: payloadPackets
                         });
-                        payloadToTransfer = null;
-                        pendingPayload = null;
+                        payloadsToTransfer = [];
+                        pendingPayloads = null;
                     });
                 }
-            } else if (data.type === 'FULL_PAYLOAD') {
-                incomingPayloadBuffer = data;
-                incomingPayloadBuffer.from = conn.peer;
+            } else if (data.type === 'FULL_PAYLOAD_MULTI') {
+                incomingPayloadsBuffer = data;
+                incomingPayloadsBuffer.from = conn.peer;
                 executeReceive();
             }
         });
@@ -484,7 +497,7 @@
         friendsListEl.innerHTML = '';
         friends.forEach(fId => {
             const isOnline = activeConnections[fId] && activeConnections[fId].open;
-            if (!isOnline) return; // Only display friend when online
+            if (!isOnline) return; 
             
             const inRoom = roomPeers.has(fId);
             const div = document.createElement('div');
@@ -560,7 +573,7 @@
         closeModal();
     }
 
-    // --- MediaPipe Hand Tracking Setup (Optimized for robust gesture response) ---
+    // --- MediaPipe Hand Tracking Setup ---
     const getDist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
     const isFingerExtended = (tip, pip, wrist) => getDist(tip, wrist) > getDist(pip, wrist);
 
@@ -585,8 +598,8 @@
             if(isFingerExtended(l[16], l[14], wrist)) openFingers++;
             if(isFingerExtended(l[20], l[18], wrist)) openFingers++;
 
-            // Sender Trigger: Fist gesture confirmation (1 frame for instant response)
-            if (!isReceiving && payloadToTransfer && openFingers <= 1) {
+            // Sender Trigger: Fist gesture confirmation
+            if (!isReceiving && payloadsToTransfer.length > 0 && openFingers <= 1) {
                 consecutiveFistFrames++;
                 consecutivePalmFrames = 0;
                 if (consecutiveFistFrames >= 1) {
@@ -598,8 +611,8 @@
                 consecutiveFistFrames = 0;
             }
             
-            // Receiver Trigger: Open Palm drop acceptance confirmation (1 frame)
-            if (isReceiving && incomingPayloadBuffer && openFingers >= 3) {
+            // Receiver Trigger: Open Palm drop acceptance confirmation
+            if (isReceiving && incomingPayloadsBuffer && openFingers >= 3) {
                 consecutivePalmFrames++;
                 consecutiveFistFrames = 0;
                 if (consecutivePalmFrames >= 1) {
@@ -655,57 +668,61 @@
         }
     }
 
-    // --- File Handling & Gesture Dispatches ---
+    // --- Multiple File Handling & Viewer ---
     function handleFileSelect(e) {
-        const file = e.target.files[0];
-        if(file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
-            if(currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
-            currentObjectUrl = URL.createObjectURL(file);
-            payloadToTransfer = { type: file.type, data: file, name: file.name };
-            
-            // If selecting a new file while in receiving mode, update notification/state automatically
-            incomingPayloadBuffer = null;
+        const files = Array.from(e.target.files);
+        const validFiles = files.filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
+        
+        if (validFiles.length > 0) {
+            objectUrls.forEach(url => URL.revokeObjectURL(url));
+            objectUrls = [];
+
+            payloadsToTransfer = validFiles.map(file => {
+                const url = URL.createObjectURL(file);
+                objectUrls.push(url);
+                return { type: file.type, data: file, name: file.name, url: url };
+            });
+
+            incomingPayloadsBuffer = null;
             homeNotificationBanner.classList.remove('active');
 
-            openFullscreenViewer(currentObjectUrl, file.type);
+            renderFullscreenPreview(payloadsToTransfer);
             checkReadyState();
-        } else if (file) {
-            alert("Please select a valid Image or Video file.");
+        } else if (files.length > 0) {
+            alert("Please select valid Image or Video files.");
         }
     }
 
-    function openFullscreenViewer(url, type) {
-        if(currentObjectUrl && currentObjectUrl !== url) URL.revokeObjectURL(currentObjectUrl);
-        currentObjectUrl = url;
-
-        if (type.startsWith('video/')) {
-            fsVidPreview.src = url;
-            fsVidPreview.style.display = 'block';
-            fsImgPreview.style.display = 'none';
-        } else {
-            fsImgPreview.src = url;
-            fsImgPreview.style.display = 'block';
-            fsVidPreview.style.display = 'none';
-        }
+    function renderFullscreenPreview(items) {
+        previewGridContainer.innerHTML = '';
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'preview-item-card';
+            if (item.type.startsWith('video/')) {
+                card.innerHTML = `<video src="${item.url}" controls autoplay loop muted></video><div class="preview-item-name">${item.name}</div>`;
+            } else {
+                card.innerHTML = `<img src="${item.url}" alt="${item.name}"><div class="preview-item-name">${item.name}</div>`;
+            }
+            previewGridContainer.appendChild(card);
+        });
         fullscreenViewer.classList.add('active');
     }
 
     function closeFullscreenViewer() {
         fullscreenViewer.classList.remove('active');
-        fsImgPreview.src = '';
-        fsVidPreview.src = '';
+        previewGridContainer.innerHTML = '';
     }
 
     function checkReadyState() {
         const onlineFriendsCount = friends.filter(fId => activeConnections[fId] && activeConnections[fId].open).length;
-        if (payloadToTransfer && !isReceiving && (onlineFriendsCount > 0 || roomPeers.size > 1)) {
+        if (payloadsToTransfer.length > 0 && !isReceiving && (onlineFriendsCount > 0 || roomPeers.size > 1)) {
             startStealthCamera(false);
         }
     }
 
     function triggerTransferOut() {
-        if (payloadToTransfer) {
-            pendingPayload = payloadToTransfer;
+        if (payloadsToTransfer.length > 0) {
+            pendingPayloads = payloadsToTransfer;
             
             const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
             if (targets.length === 0) {
@@ -717,67 +734,73 @@
             targets.forEach(targetId => {
                 const conn = activeConnections[targetId];
                 if (conn && conn.open) {
-                    conn.send({ type: 'READY_TO_DROP', name: payloadToTransfer.name, fileType: payloadToTransfer.type });
+                    conn.send({ type: 'READY_TO_DROP_MULTI', filesCount: payloadsToTransfer.length });
                 }
             });
             
-            const activePrev = fsVidPreview.style.display === 'block' ? fsVidPreview : fsImgPreview;
-            activePrev.classList.add('teleport-out');
+            previewGridContainer.classList.add('teleport-out');
             flashScreen.classList.add('active');
 
-            setTimeout(() => flashScreen.classList.remove('active'), 200);
+            setTimeout(() => flashScreen.classList.remove('active'), 250);
             setTimeout(() => {
-                activePrev.classList.remove('teleport-out');
+                previewGridContainer.classList.remove('teleport-out');
                 closeFullscreenViewer();
                 stopStealthCamera();
-            }, 600);
+            }, 700);
         }
     }
 
     function triggerTransferIn() {
-        if (incomingPayloadBuffer && isReceiving) {
+        if (incomingPayloadsBuffer && isReceiving) {
             flashScreen.classList.add('active');
             
-            const senderId = incomingPayloadBuffer.from || friends[0];
+            const senderId = incomingPayloadsBuffer.from || friends[0];
             const conn = activeConnections[senderId];
             if (conn && conn.open) {
-                conn.send({ type: 'REQUEST_PAYLOAD' });
+                conn.send({ type: 'REQUEST_PAYLOAD_MULTI' });
             }
 
-            setTimeout(() => flashScreen.classList.remove('active'), 200);
+            setTimeout(() => flashScreen.classList.remove('active'), 250);
         }
     }
 
     function executeReceive() {
-        if (!incomingPayloadBuffer) return;
+        if (!incomingPayloadsBuffer || !incomingPayloadsBuffer.files) return;
 
         flashScreen.classList.add('active');
-        const fileBlob = new Blob([incomingPayloadBuffer.buffer], { type: incomingPayloadBuffer.fileType });
-        const dropUrl = URL.createObjectURL(fileBlob);
         
-        payloadToTransfer = incomingPayloadBuffer;
-        incomingPayloadBuffer = null;
+        objectUrls.forEach(url => URL.revokeObjectURL(url));
+        objectUrls = [];
 
-        // Hide home page notification upon completion
+        const receivedItems = incomingPayloadsBuffer.files.map(fileObj => {
+            const blob = new Blob([fileObj.buffer], { type: fileObj.fileType });
+            const url = URL.createObjectURL(blob);
+            objectUrls.push(url);
+            
+            // Auto download each file
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileObj.name || 'airgrab_payload';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            return { type: fileObj.fileType, name: fileObj.name, url: url };
+        });
+
+        payloadsToTransfer = receivedItems;
+        incomingPayloadsBuffer = null;
+
         homeNotificationBanner.classList.remove('active');
-
         stopStealthCamera();
-        openFullscreenViewer(dropUrl, payloadToTransfer.fileType);
-        
-        const activePrev = payloadToTransfer.fileType.startsWith('video/') ? fsVidPreview : fsImgPreview;
-        activePrev.classList.add('teleport-in');
 
-        const a = document.createElement('a');
-        a.href = dropUrl;
-        a.download = payloadToTransfer.name || 'airgrab_payload';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        renderFullscreenPreview(receivedItems);
+        previewGridContainer.classList.add('teleport-in');
 
         setTimeout(() => {
             flashScreen.classList.remove('active');
-            activePrev.classList.remove('teleport-in');
-        }, 700);
+            previewGridContainer.classList.remove('teleport-in');
+        }, 800);
     }
 </script>
 </body>
