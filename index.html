@@ -105,10 +105,12 @@
         .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
         .fullscreen-viewer.active { display: flex; opacity: 1; }
         
-        .fullscreen-content { width: 100%; height: 100%; object-fit: contain; background: transparent; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, opacity 0.5s ease; }
+        /* Transition handles smooth fast hand tracking mapping */
+        .fullscreen-content { width: 100%; height: 100%; object-fit: contain; background: transparent; transition: transform 0.1s ease-out, border-radius 0.2s, box-shadow 0.2s, filter 0.5s ease, opacity 0.2s ease; }
         
-        .fullscreen-content.teleport-out { transform: scale(0.02) translateY(-400px) rotate(15deg); opacity: 0; filter: blur(20px) brightness(3); }
+        .fullscreen-content.teleport-out { transform: scale(0.02) translateY(-400px) rotate(15deg) !important; opacity: 0 !important; filter: blur(20px) brightness(3); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, opacity 0.5s ease; }
         .fullscreen-content.teleport-in { animation: teleportInEffect 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         @keyframes teleportInEffect {
             0% { transform: scale(0.02) translateY(400px) rotate(-15deg); opacity: 0; filter: blur(20px) brightness(3); }
             100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; filter: blur(0) brightness(1); }
@@ -116,6 +118,10 @@
 
         .close-viewer-btn { position: absolute; top: 25px; right: 25px; z-index: 4001; background: rgba(255,255,255,0.15); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: background 0.2s; }
         .close-viewer-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Receiver Incoming Payload Dummy (Simulates holding an object) */
+        .receiver-dummy { position: fixed; z-index: 4500; width: 64px; height: 64px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border-radius: 16px; display: none; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6); pointer-events: none; }
+        .receiver-dummy svg { color: white; width: 32px; height: 32px; animation: pulseGlow 2s infinite; }
 
         /* --- Fully Hidden Stealth Webcam Background Tracker --- */
         #webcam { position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -157,6 +163,13 @@
 
     <div class="flash-overlay" id="flash"></div>
     <video id="webcam" autoplay playsinline muted></video>
+
+    <!-- Receiver Dummy Box (Follows Pinch) -->
+    <div id="receiver-dummy" class="receiver-dummy">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+        </svg>
+    </div>
 
     <!-- Incoming Request / Invite Modal Popup -->
     <div class="modal-overlay" id="popup-modal">
@@ -200,7 +213,7 @@
 
             <div class="hero-section">
                 <h2>Files move<br>with <span class="gradient-text">your friends.</span></h2>
-                <p>Pair once permanently. No codes, no servers, no scanning—just open your site, grab an asset, and throw it directly to your connected friends.</p>
+                <p>Pair once permanently. No codes, no servers, no scanning—just open your site, pinch an asset, and throw it directly to your connected friends.</p>
             </div>
 
             <div class="features-row">
@@ -210,11 +223,11 @@
                 </div>
                 <div class="feature">
                     <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg></div>
-                    <div class="feature-text"><h4>Grab</h4><p>Make a fist</p></div>
+                    <div class="feature-text"><h4>Pinch & Shrink</h4><p>Grab from screen</p></div>
                 </div>
                 <div class="feature">
                     <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
-                    <div class="feature-text"><h4>Drop</h4><p>Open palm catch</p></div>
+                    <div class="feature-text"><h4>Throw & Catch</h4><p>Pull out / Open pinch</p></div>
                 </div>
             </div>
 
@@ -268,7 +281,7 @@
                 <div class="home-notification-banner" id="home-notification-banner">
                     <div class="home-notification-content">
                         <span>Incoming Broadcast</span>
-                        <span id="home-notification-text">one friend has grabbed image,image can be transferred here</span>
+                        <span id="home-notification-text">A friend has thrown a file. Bring pinched hand into view!</span>
                     </div>
                     <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch File</button>
                 </div>
@@ -311,12 +324,15 @@
     let cameraActive = false;
     let cameraStream = null;
     
-    // Stability & Gesture tracking counters tuned for high reliability
-    let consecutiveFistFrames = 0;
-    let consecutivePalmFrames = 0;
+    // Pinch gesture state variables
     let isProcessingGesture = false;
     let lastProcessTime = 0;
     let incomingPayloadBuffer = null;
+    
+    let isPinchedSender = false;
+    let isThrowing = false;
+    let isPinchedReceiver = false;
+    let receiverHasGrabbed = false;
 
     let pendingModalCallback = null;
 
@@ -334,6 +350,7 @@
     const fullscreenViewer = document.getElementById('fullscreen-viewer');
     const fsImgPreview = document.getElementById('fs-img-preview');
     const fsVidPreview = document.getElementById('fs-vid-preview');
+    const receiverDummy = document.getElementById('receiver-dummy');
 
     const popupModal = document.getElementById('popup-modal');
     const modalTitle = document.getElementById('modal-title');
@@ -427,7 +444,6 @@
                 roomPeers.add(data.from);
                 updateRoomUI();
             } else if (data.type === 'READY_TO_DROP') {
-                // Automatically update or switch to incoming receiving mode for the new image broadcast
                 incomingPayloadBuffer = data;
                 incomingPayloadBuffer.from = conn.peer;
                 
@@ -484,7 +500,7 @@
         friendsListEl.innerHTML = '';
         friends.forEach(fId => {
             const isOnline = activeConnections[fId] && activeConnections[fId].open;
-            if (!isOnline) return; // Only display friend when online
+            if (!isOnline) return; 
             
             const inRoom = roomPeers.has(fId);
             const div = document.createElement('div');
@@ -560,9 +576,8 @@
         closeModal();
     }
 
-    // --- MediaPipe Hand Tracking Setup (Optimized for robust gesture response) ---
+    // --- MediaPipe Hand Tracking Setup (Pinch mechanics integrated) ---
     const getDist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
-    const isFingerExtended = (tip, pip, wrist) => getDist(tip, wrist) > getDist(pip, wrist);
 
     const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
     hands.setOptions({ 
@@ -577,38 +592,81 @@
 
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const l = results.multiHandLandmarks[0];
-            const wrist = l[0];
+            const thumbTip = l[4];
+            const indexTip = l[8];
             
-            let openFingers = 0;
-            if(isFingerExtended(l[8], l[6], wrist)) openFingers++;
-            if(isFingerExtended(l[12], l[10], wrist)) openFingers++;
-            if(isFingerExtended(l[16], l[14], wrist)) openFingers++;
-            if(isFingerExtended(l[20], l[18], wrist)) openFingers++;
+            // Check Pinch Distance
+            const pinchDist = getDist(indexTip, thumbTip);
+            const isPinching = pinchDist < 0.08;
 
-            // Sender Trigger: Fist gesture confirmation (1 frame for instant response)
-            if (!isReceiving && payloadToTransfer && openFingers <= 1) {
-                consecutiveFistFrames++;
-                consecutivePalmFrames = 0;
-                if (consecutiveFistFrames >= 1) {
-                    isProcessingGesture = true;
-                    consecutiveFistFrames = 0;
-                    triggerTransferOut();
+            // X, Y position (mirrored correctly for user-facing camera)
+            const xPos = (1 - ((indexTip.x + thumbTip.x) / 2)) * window.innerWidth;
+            const yPos = ((indexTip.y + thumbTip.y) / 2) * window.innerHeight;
+
+            // --- SENDER LOGIC (Pinch to shrink, Drag to edge to throw) ---
+            if (!isReceiving && payloadToTransfer && !isThrowing) {
+                const activePrev = payloadToTransfer.type.startsWith('video/') ? fsVidPreview : fsImgPreview;
+                
+                if (isPinching) {
+                    isPinchedSender = true;
+                    
+                    // Offset calculations mapping hand to screen center (to translate correctly)
+                    const xOffset = xPos - (window.innerWidth / 2);
+                    const yOffset = yPos - (window.innerHeight / 2);
+                    
+                    // Shrink and follow hand
+                    activePrev.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(0.15)`;
+                    activePrev.style.borderRadius = "50px";
+                    activePrev.style.boxShadow = "0 30px 60px rgba(0,0,0,0.6)";
+
+                    // Check bounds - If dragged near the edge of the screen, Throw!
+                    const edgeThreshold = 80; // Distance in pixels from screen edge
+                    if (xPos < edgeThreshold || xPos > window.innerWidth - edgeThreshold || 
+                        yPos < edgeThreshold || yPos > window.innerHeight - edgeThreshold) {
+                        
+                        isThrowing = true;
+                        
+                        // Push it further out visually before transferring
+                        activePrev.style.transform = `translate(${xOffset * 1.5}px, ${yOffset * 1.5}px) scale(0.05)`;
+                        activePrev.style.opacity = '0';
+                        
+                        // Trigger out sequence after minimal visual delay
+                        setTimeout(() => { triggerTransferOut(); }, 200);
+                    }
+                } else {
+                    if (isPinchedSender) {
+                        // Released without throwing, boom back to full screen
+                        isPinchedSender = false;
+                        activePrev.style.transform = `translate(0px, 0px) scale(1)`;
+                        activePrev.style.borderRadius = "0px";
+                        activePrev.style.boxShadow = "none";
+                    }
                 }
-            } else if (!isReceiving) {
-                consecutiveFistFrames = 0;
             }
             
-            // Receiver Trigger: Open Palm drop acceptance confirmation (1 frame)
-            if (isReceiving && incomingPayloadBuffer && openFingers >= 3) {
-                consecutivePalmFrames++;
-                consecutiveFistFrames = 0;
-                if (consecutivePalmFrames >= 1) {
-                    isProcessingGesture = true;
-                    consecutivePalmFrames = 0;
-                    triggerTransferIn();
+            // --- RECEIVER LOGIC (Pinch to catch incoming payload) ---
+            if (isReceiving && incomingPayloadBuffer) {
+                if (isPinching) {
+                    isPinchedReceiver = true;
+                    receiverHasGrabbed = true;
+                    
+                    // Display dummy UI acting like the incoming object is held
+                    receiverDummy.style.display = 'flex';
+                    // Center the visual exactly on hand coordinates
+                    receiverDummy.style.transform = `translate(${xPos - 32}px, ${yPos - 32}px)`; 
+                    
+                    homeNotificationBanner.classList.remove('active');
+                } else {
+                    if (receiverHasGrabbed) {
+                        // Opened the pinch! Boom! Received!
+                        receiverHasGrabbed = false;
+                        isPinchedReceiver = false;
+                        receiverDummy.style.display = 'none';
+                        isProcessingGesture = true;
+                        
+                        triggerTransferIn();
+                    }
                 }
-            } else if (isReceiving) {
-                consecutivePalmFrames = 0;
             }
         }
     });
@@ -628,8 +686,10 @@
 
         isReceiving = receivingMode;
         isProcessingGesture = false;
-        consecutiveFistFrames = 0;
-        consecutivePalmFrames = 0;
+        isPinchedSender = false;
+        isThrowing = false;
+        isPinchedReceiver = false;
+        receiverHasGrabbed = false;
 
         try {
             cameraStream = await navigator.mediaDevices.getUserMedia({ 
@@ -647,15 +707,17 @@
     function stopStealthCamera() {
         cameraActive = false;
         isProcessingGesture = false;
-        consecutiveFistFrames = 0;
-        consecutivePalmFrames = 0;
+        isPinchedSender = false;
+        isThrowing = false;
+        isPinchedReceiver = false;
+        receiverHasGrabbed = false;
         if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop());
             cameraStream = null;
         }
     }
 
-    // --- File Handling & Gesture Dispatches ---
+    // --- File Handling & Gestural Dispatches ---
     function handleFileSelect(e) {
         const file = e.target.files[0];
         if(file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
@@ -663,7 +725,6 @@
             currentObjectUrl = URL.createObjectURL(file);
             payloadToTransfer = { type: file.type, data: file, name: file.name };
             
-            // If selecting a new file while in receiving mode, update notification/state automatically
             incomingPayloadBuffer = null;
             homeNotificationBanner.classList.remove('active');
 
@@ -711,6 +772,7 @@
             if (targets.length === 0) {
                 alert("No active online friends connected to throw to!");
                 isProcessingGesture = false;
+                isThrowing = false;
                 return;
             }
 
@@ -722,14 +784,25 @@
             });
             
             const activePrev = fsVidPreview.style.display === 'block' ? fsVidPreview : fsImgPreview;
+            
+            // Allow CSS to take over for the final throw visual mapping
+            activePrev.style.transform = ''; 
             activePrev.classList.add('teleport-out');
             flashScreen.classList.add('active');
 
             setTimeout(() => flashScreen.classList.remove('active'), 200);
             setTimeout(() => {
                 activePrev.classList.remove('teleport-out');
+                // Clean up inline styles injected during tracking
+                activePrev.style.transform = '';
+                activePrev.style.opacity = '';
+                activePrev.style.borderRadius = '';
+                activePrev.style.boxShadow = '';
+                
                 closeFullscreenViewer();
                 stopStealthCamera();
+                isThrowing = false;
+                isPinchedSender = false;
             }, 600);
         }
     }
@@ -758,13 +831,20 @@
         payloadToTransfer = incomingPayloadBuffer;
         incomingPayloadBuffer = null;
 
-        // Hide home page notification upon completion
         homeNotificationBanner.classList.remove('active');
 
         stopStealthCamera();
         openFullscreenViewer(dropUrl, payloadToTransfer.fileType);
         
         const activePrev = payloadToTransfer.fileType.startsWith('video/') ? fsVidPreview : fsImgPreview;
+        
+        // Remove tracking inline styles just in case
+        activePrev.style.transform = '';
+        activePrev.style.borderRadius = '';
+        activePrev.style.boxShadow = '';
+        activePrev.style.opacity = '';
+        
+        // BOOM Full screen effect
         activePrev.classList.add('teleport-in');
 
         const a = document.createElement('a');
