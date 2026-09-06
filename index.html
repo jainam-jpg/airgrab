@@ -365,7 +365,7 @@
         });
 
         peer.on('connection', (conn) => {
-            setupIncomingConnection(conn);
+            setupConnection(conn);
         });
 
         peer.on('error', (err) => {
@@ -392,6 +392,7 @@
         if (friends.includes(targetId)) return alert("Already in your friends list!");
 
         const conn = peer.connect(targetId, { reliable: true });
+        setupConnection(conn);
         conn.on('open', () => {
             conn.send({ type: 'FRIEND_REQUEST', from: myId });
             alert("Friend request sent successfully!");
@@ -402,7 +403,12 @@
         });
     }
 
-    function setupIncomingConnection(conn) {
+    function setupConnection(conn) {
+        conn.on('open', () => {
+            activeConnections[conn.peer] = conn;
+            refreshFriendsUI();
+        });
+
         conn.on('data', (data) => {
             if (data.type === 'FRIEND_REQUEST') {
                 showModal(
@@ -415,6 +421,7 @@
                         }
                         // Send approval back
                         const acceptConn = peer.connect(data.from, { reliable: true });
+                        setupConnection(acceptConn);
                         acceptConn.on('open', () => acceptConn.send({ type: 'FRIEND_ACCEPT', from: myId }));
                     }
                 );
@@ -437,6 +444,7 @@
                 updateRoomUI();
             } else if (data.type === 'READY_TO_DROP') {
                 incomingPayloadBuffer = data;
+                incomingPayloadBuffer.from = conn.peer;
                 startStealthCamera(true); // Open receiver HUD waiting for open palm
             } else if (data.type === 'REQUEST_PAYLOAD') {
                 if (pendingPayload) {
@@ -453,13 +461,19 @@
                 }
             } else if (data.type === 'FULL_PAYLOAD') {
                 incomingPayloadBuffer = data;
+                incomingPayloadBuffer.from = conn.peer;
                 executeReceive();
             }
         });
 
         conn.on('close', () => {
             roomPeers.delete(conn.peer);
+            delete activeConnections[conn.peer];
             updateRoomUI();
+        });
+
+        conn.on('error', (err) => {
+            console.error("Connection error with", conn.peer, err);
         });
 
         activeConnections[conn.peer] = conn;
@@ -469,10 +483,7 @@
         friends.forEach(fId => {
             if (!activeConnections[fId] || !activeConnections[fId].open) {
                 const c = peer.connect(fId, { reliable: true });
-                c.on('open', () => {
-                    activeConnections[fId] = c;
-                    refreshFriendsUI();
-                });
+                setupConnection(c);
             }
         });
     }
@@ -529,6 +540,7 @@
         roomPeers.forEach(pId => {
             if (pId !== myId) {
                 const c = peer.connect(pId, { reliable: true });
+                setupConnection(c);
                 c.on('open', () => {
                     activeConnections[pId] = c;
                     c.send({ type: 'ROOM_JOINED', from: myId });
