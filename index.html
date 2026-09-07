@@ -292,7 +292,7 @@
                         <span>Incoming Broadcast</span>
                         <span id="home-notification-text">Friend has grabbed data, ready to catch</span>
                     </div>
-                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch Payload</button>
+                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch Payload (Open Palm)</button>
                 </div>
 
                 <!-- Dynamic Workspace Card Container -->
@@ -313,21 +313,17 @@
                     <div id="mode-content-web" style="display: none; width: 100%; text-align: center;">
                         <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                         <h3>Grab & Throw Website Tab (e.g. YouTube)</h3>
-                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://youtube.com/...)" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
+                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://youtube.com/...)" oninput="updateWebPayload()" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
                         <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px; font-size: 0.8rem;">Current Tab URL loaded</p>
-                        <button class="btn-gradient" onclick="prepareWebsiteThrow()">
-                            Arm Tab for Throwing (Fist)
-                        </button>
+                        <div id="web-armed-status" style="font-size: 0.85rem; color: var(--success); font-weight: 600; margin-top: 4px;">✅ Armed for Fist Throw ✊</div>
                     </div>
 
                     <!-- AI CONTEXT SHARE MODE CONTENT -->
                     <div id="mode-content-ai" style="display: none; width: 100%; text-align: center;">
                         <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         <h3>Grab & Throw AI Chat Context</h3>
-                        <textarea id="ai-context-input" placeholder="Paste or type AI chat context here..." style="width: 100%; height: 75px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; color: white; font-size: 0.85rem; outline: none; resize: none; margin-bottom: 10px;"></textarea>
-                        <button class="btn-gradient" onclick="prepareAiContextThrow()">
-                            Arm AI Chat Context (Fist)
-                        </button>
+                        <textarea id="ai-context-input" placeholder="Paste or type AI chat context here..." oninput="updateAiPayload()" style="width: 100%; height: 75px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; color: white; font-size: 0.85rem; outline: none; resize: none; margin-bottom: 10px;"></textarea>
+                        <div style="font-size: 0.85rem; color: var(--success); font-weight: 600;">✅ Armed for Fist Throw ✊</div>
                     </div>
                 </div>
 
@@ -401,12 +397,28 @@
             const curUrl = window.location.href;
             document.getElementById('current-url-display').innerText = curUrl;
             document.getElementById('web-url-input').value = curUrl;
+            pendingPayloads = { url: curUrl, title: document.title || curUrl };
+        } else if (mode === 'ai') {
+            const aiInput = document.getElementById('ai-context-input');
+            const txt = aiInput.value.trim() || "User: Hello AI\nAI: How can I help you today?";
+            pendingPayloads = { contextText: txt };
+        } else {
+            pendingPayloads = payloadsToTransfer.length > 0 ? payloadsToTransfer : null;
         }
 
-        payloadsToTransfer = [];
-        pendingPayloads = null;
         incomingPayloadsBuffer = null;
         homeNotificationBanner.classList.remove('active');
+    }
+
+    function updateWebPayload() {
+        const urlInput = document.getElementById('web-url-input').value.trim();
+        const currentUrl = urlInput || window.location.href;
+        pendingPayloads = { url: currentUrl, title: document.title || currentUrl };
+    }
+
+    function updateAiPayload() {
+        const aiInput = document.getElementById('ai-context-input');
+        pendingPayloads = { contextText: aiInput.value.trim() };
     }
 
     // --- PeerJS Initialization ---
@@ -504,7 +516,7 @@
                 if (data.type === 'READY_TO_DROP_WEB') descText = `Friend shared website (${data.title || data.url})`;
                 if (data.type === 'READY_TO_DROP_AI') descText = "Friend shared AI chat context";
 
-                document.getElementById('home-notification-text').innerText = `${descText}, ready to catch with open palm!`;
+                document.getElementById('home-notification-text').innerText = `${descText}, make open palm 🖐️ to catch!`;
                 isReceiving = true; 
             } else if (data.type === 'REQUEST_PAYLOAD_MULTI') {
                 if (pendingPayloads && Array.isArray(pendingPayloads) && pendingPayloads.length > 0) {
@@ -759,75 +771,6 @@
         previewGridContainer.innerHTML = '';
     }
 
-    // --- Feature 2: Website Sharing ---
-    function prepareWebsiteThrow() {
-        const urlInput = document.getElementById('web-url-input').value.trim();
-        const currentUrl = urlInput || window.location.href;
-        const currentTitle = document.title || currentUrl;
-        
-        pendingPayloads = { url: currentUrl, title: currentTitle };
-        isReceiving = false;
-
-        document.getElementById('workspace-card').classList.add('teleport-out');
-        flashScreen.classList.add('active');
-
-        const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
-        if (targets.length === 0) {
-            alert("No active online friends connected to throw to!");
-            document.getElementById('workspace-card').classList.remove('teleport-out');
-            flashScreen.classList.remove('active');
-            return;
-        }
-
-        targets.forEach(targetId => {
-            const conn = activeConnections[targetId];
-            if (conn && conn.open) {
-                conn.send({ type: 'READY_TO_DROP_WEB', url: currentUrl, title: currentTitle });
-            }
-        });
-
-        setTimeout(() => flashScreen.classList.remove('active'), 250);
-        setTimeout(() => {
-            document.getElementById('workspace-card').classList.remove('teleport-out');
-        }, 700);
-    }
-
-    // --- Feature 3: AI Context Sharing ---
-    function prepareAiContextThrow() {
-        const aiInput = document.getElementById('ai-context-input');
-        let extractedContext = aiInput ? aiInput.value.trim() : "";
-        
-        if (!extractedContext) {
-            extractedContext = "User: Hello AI\nAI: How can I help you today?";
-        }
-
-        pendingPayloads = { contextText: extractedContext };
-        isReceiving = false;
-
-        document.getElementById('workspace-card').classList.add('teleport-out');
-        flashScreen.classList.add('active');
-
-        const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
-        if (targets.length === 0) {
-            alert("No active online friends connected to throw AI context to!");
-            document.getElementById('workspace-card').classList.remove('teleport-out');
-            flashScreen.classList.remove('active');
-            return;
-        }
-
-        targets.forEach(targetId => {
-            const conn = activeConnections[targetId];
-            if (conn && conn.open) {
-                conn.send({ type: 'READY_TO_DROP_AI', contextText: extractedContext });
-            }
-        });
-
-        setTimeout(() => flashScreen.classList.remove('active'), 250);
-        setTimeout(() => {
-            document.getElementById('workspace-card').classList.remove('teleport-out');
-        }, 700);
-    }
-
     // --- Unified Transfer Trigger Execution ---
     function triggerTransferOut() {
         const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
@@ -858,14 +801,14 @@
         setTimeout(() => {
             flashScreen.classList.remove('active');
             
-            // If website tab is thrown, remove/close or clear it on the sender tab
+            // If website tab is thrown, remove/close or clear it on the sender tab instantly
             if (currentMode === 'web') {
                 document.body.innerHTML = `
                     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#0b1120; color:#f8fafc; text-align:center; font-family:'Inter',sans-serif; padding:20px;">
-                        <div style="font-size:3rem; margin-bottom:15px;">🚀</div>
+                        <div style="font-size:3rem; margin-bottom:15px;">🌐🚀</div>
                         <h2 style="font-size:1.8rem; margin-bottom:10px;">Website Tab Grabbed & Thrown!</h2>
-                        <p style="color:#94a3b8; max-width:400px; margin-bottom:20px;">This tab's payload was successfully transferred to your friend and closed/removed here.</p>
-                        <button onclick="window.location.reload()" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:white; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer;">Reset AirGrab</button>
+                        <p style="color:#94a3b8; max-width:400px; margin-bottom:20px;">This website tab was successfully thrown to your friend. The tab has been removed/closed here.</p>
+                        <button onclick="window.location.reload()" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:white; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer;">Open New Tab / Reset</button>
                     </div>
                 `;
             }
@@ -930,10 +873,9 @@
             const targetUrl = incomingPayloadsBuffer.url;
             const targetTitle = incomingPayloadsBuffer.title || targetUrl;
             
-            // Automatically open in a new tab instantly upon catch
+            // Automatically open in a new tab instantly upon catch gesture (open palm)
             const newWindow = window.open(targetUrl, '_blank');
             if (!newWindow) {
-                // Fallback if popup blocker intervenes
                 const clickToOpen = confirm(`Website "${targetTitle}" caught! Click OK to open in new tab.`);
                 if (clickToOpen) {
                     window.open(targetUrl, '_blank');
