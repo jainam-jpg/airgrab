@@ -49,13 +49,8 @@
         .footer-logo div h4 { font-size: 1rem; }
         .footer-logo div p { font-size: 0.7rem; color: var(--text-muted); }
 
-        /* --- Mode Switcher Tabs --- */
-        .mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
-        .mode-tab { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 10px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .mode-tab.active { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
-
         /* --- Right Column Interaction UI --- */
-        .status-header { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .status-header { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 30px; }
         .status-badge { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
         .status-indicator { width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%; }
         .status-indicator.active { background: var(--success); box-shadow: 0 0 10px var(--success); }
@@ -64,20 +59,20 @@
         .status-text span:last-child { font-size: 0.7rem; color: var(--text-muted); }
 
         /* --- Friends & Room System Panel Styling --- */
-        .network-panel { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px; margin-bottom: 16px; }
-        .panel-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .my-id-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 6px 10px; font-size: 0.85rem; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.04); }
+        .network-panel { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+        .panel-title { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .my-id-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.04); }
         .my-id-box span { font-family: monospace; color: #818cf8; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; }
         .copy-pill { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
         .copy-pill:hover { background: rgba(99, 102, 241, 0.4); }
 
-        .friend-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .friend-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
         .friend-input-row input { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 12px; color: white; font-size: 0.85rem; outline: none; }
         .friend-input-row input::placeholder { color: #475569; }
         .btn-sm-gradient { background: var(--accent-gradient); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
 
-        .friends-list-container { max-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .friend-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
+        .friends-list-container { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .friend-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
         .friend-info { display: flex; align-items: center; gap: 8px; }
         .friend-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); }
         .friend-status-dot.online { background: var(--success); box-shadow: 0 0 6px var(--success); }
@@ -87,7 +82,7 @@
         .btn-action-sm.primary { background: var(--accent-solid); }
 
         /* --- Dynamic Notification Box on Home Page --- */
-        .home-notification-banner { background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 16px; display: none; align-items: center; justify-content: space-between; animation: pulseGlow 2s infinite; }
+        .home-notification-banner { background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; animation: pulseGlow 2s infinite; }
         .home-notification-banner.active { display: flex; }
         .home-notification-content { display: flex; flex-direction: column; gap: 2px; }
         .home-notification-content span:first-child { font-size: 0.8rem; font-weight: 700; color: #a855f7; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -98,11 +93,11 @@
             100% { border-color: rgba(99, 102, 241, 0.3); box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
         }
 
-        .upload-card { border: 1px dashed rgba(255,255,255,0.15); border-radius: 20px; padding: 25px 20px; text-align: center; margin-bottom: 16px; background: rgba(255,255,255,0.01); transition: all 0.3s; position: relative; overflow: hidden; min-height: 180px; display: flex; align-items: center; justify-content: center; }
+        .upload-card { border: 1px dashed rgba(255,255,255,0.15); border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 20px; background: rgba(255,255,255,0.01); transition: all 0.3s; position: relative; overflow: hidden; min-height: 200px; display: flex; align-items: center; justify-content: center; }
         .upload-card:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
-        .upload-icon { margin-bottom: 10px; color: white; }
+        .upload-icon { margin-bottom: 12px; color: white; }
         .upload-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
-        .upload-card p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; }
+        .upload-card p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; }
         .btn-gradient { background: var(--accent-gradient); color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25); }
         .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.4); }
         
@@ -110,13 +105,14 @@
         .fullscreen-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); z-index: 4000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; overflow: hidden; }
         .fullscreen-viewer.active { display: flex; opacity: 1; }
         
+        /* Multi-file preview container stack/grid */
         .preview-grid { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: center; max-width: 90vw; max-height: 90vh; overflow-y: auto; padding: 20px; }
         .preview-item-card { position: relative; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 10px; max-width: 320px; max-height: 380px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .preview-item-card img, .preview-item-card video { width: 100%; max-height: 260px; object-fit: contain; border-radius: 10px; background: #000; }
         .preview-item-name { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; text-align: center; }
 
         /* Ultra Cool Warp & Vortex Animations */
-        .preview-grid.teleport-out, .upload-card.teleport-out { animation: warpSpeedOut 0.7s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
+        .preview-grid.teleport-out { animation: warpSpeedOut 0.7s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
         @keyframes warpSpeedOut {
             0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0) brightness(1); }
             40% { transform: scale(1.3) rotate(-5deg); filter: blur(2px) brightness(1.8) contrast(1.5); }
@@ -214,8 +210,8 @@
             </div>
 
             <div class="hero-section">
-                <h2>Cross-Device<br><span class="gradient-text">Magic Transfer.</span></h2>
-                <p>Pair permanently. Seamlessly grab & throw Media Files, Active Websites (like YouTube tabs), or AI Chat Context across devices using hand gestures!</p>
+                <h2>Files move<br>with <span class="gradient-text">your friends.</span></h2>
+                <p>Pair once permanently. No codes, no servers, no scanning—just select multiple files, grab, and throw them directly in a warp vortex!</p>
             </div>
 
             <div class="features-row">
@@ -256,13 +252,6 @@
 
             <div style="flex: 1; display: flex; flex-direction: column;">
                 
-                <!-- Mode Selector Tabs -->
-                <div class="mode-tabs">
-                    <button class="mode-tab active" id="tab-media" onclick="switchMode('media')">🖼️ Media Share</button>
-                    <button class="mode-tab" id="tab-web" onclick="switchMode('web')">🌐 Website Share</button>
-                    <button class="mode-tab" id="tab-ai" onclick="switchMode('ai')">🤖 AI Context</button>
-                </div>
-
                 <!-- Network / Friend System Panel -->
                 <div class="network-panel">
                     <div class="panel-title">
@@ -274,13 +263,13 @@
                         <button class="copy-pill" onclick="copyMyId()">Copy ID</button>
                     </div>
 
-                    <div class="panel-title" style="margin-top: 8px;">ADD FRIEND BY ID</div>
+                    <div class="panel-title" style="margin-top: 12px;">ADD FRIEND BY ID</div>
                     <div class="friend-input-row">
                         <input type="text" id="friend-id-input" placeholder="Paste friend's ID here...">
                         <button class="btn-sm-gradient" onclick="sendFriendRequest()">Add</button>
                     </div>
 
-                    <div class="panel-title" style="margin-top: 8px;">FRIENDS & ROOM LIST (<span id="friends-count">0</span>)</div>
+                    <div class="panel-title" style="margin-top: 12px;">FRIENDS & ROOM LIST (<span id="friends-count">0</span>)</div>
                     <div class="friends-list-container" id="friends-list">
                         <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 10px;">No one online</div>
                     </div>
@@ -290,16 +279,15 @@
                 <div class="home-notification-banner" id="home-notification-banner">
                     <div class="home-notification-content">
                         <span>Incoming Broadcast</span>
-                        <span id="home-notification-text">Friend has grabbed data, ready to catch</span>
+                        <span id="home-notification-text">Friend has grabbed multiple files, ready to catch</span>
                     </div>
-                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch Payload (Open Palm)</button>
+                    <button class="btn-sm-gradient" onclick="triggerTransferIn()">Catch Files</button>
                 </div>
 
-                <!-- Dynamic Workspace Card Container -->
-                <div class="upload-card" id="workspace-card">
-                    <!-- MEDIA MODE CONTENT -->
-                    <div id="mode-content-media" style="width: 100%;">
-                        <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <!-- Upload Card -->
+                <div class="upload-card">
+                    <div id="upload-content">
+                        <svg class="upload-icon" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <h3>Select Multiple Assets to Throw</h3>
                         <p>Choose one or multiple images/videos to dispatch together</p>
                         <button class="btn-gradient" onclick="document.getElementById('file-picker').click()">
@@ -307,23 +295,6 @@
                             Choose Files
                         </button>
                         <input type="file" id="file-picker" accept="image/*,video/*" multiple style="display:none" onchange="handleFileSelect(event)">
-                    </div>
-
-                    <!-- WEBSITE SHARE MODE CONTENT -->
-                    <div id="mode-content-web" style="display: none; width: 100%; text-align: center;">
-                        <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                        <h3>Grab & Throw Website Tab (e.g. YouTube)</h3>
-                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://youtube.com/...)" oninput="updateWebPayload()" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
-                        <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px; font-size: 0.8rem;">Current Tab URL loaded</p>
-                        <div id="web-armed-status" style="font-size: 0.85rem; color: var(--success); font-weight: 600; margin-top: 4px;">✅ Armed for Fist Throw ✊</div>
-                    </div>
-
-                    <!-- AI CONTEXT SHARE MODE CONTENT -->
-                    <div id="mode-content-ai" style="display: none; width: 100%; text-align: center;">
-                        <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <h3>Grab & Throw AI Chat Context</h3>
-                        <textarea id="ai-context-input" placeholder="Paste or type AI chat context here..." oninput="updateAiPayload()" style="width: 100%; height: 75px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; color: white; font-size: 0.85rem; outline: none; resize: none; margin-bottom: 10px;"></textarea>
-                        <div style="font-size: 0.85rem; color: var(--success); font-weight: 600;">✅ Armed for Fist Throw ✊</div>
                     </div>
                 </div>
 
@@ -344,9 +315,7 @@
     let roomPeers = new Set();  
     
     let peer = null;
-    let currentMode = 'media'; // 'media' | 'web' | 'ai'
-
-    let payloadsToTransfer = []; 
+    let payloadsToTransfer = []; // Array for multiple files
     let pendingPayloads = null;
     let objectUrls = []; 
     let isReceiving = false;
@@ -382,45 +351,6 @@
 
     myDisplayIdEl.innerText = myId;
 
-    // --- Mode Switching Logic ---
-    function switchMode(mode) {
-        currentMode = mode;
-        document.getElementById('tab-media').className = `mode-tab ${mode === 'media' ? 'active' : ''}`;
-        document.getElementById('tab-web').className = `mode-tab ${mode === 'web' ? 'active' : ''}`;
-        document.getElementById('tab-ai').className = `mode-tab ${mode === 'ai' ? 'active' : ''}`;
-
-        document.getElementById('mode-content-media').style.display = mode === 'media' ? 'block' : 'none';
-        document.getElementById('mode-content-web').style.display = mode === 'web' ? 'block' : 'none';
-        document.getElementById('mode-content-ai').style.display = mode === 'ai' ? 'block' : 'none';
-
-        if (mode === 'web') {
-            const curUrl = window.location.href;
-            document.getElementById('current-url-display').innerText = curUrl;
-            document.getElementById('web-url-input').value = curUrl;
-            pendingPayloads = { url: curUrl, title: document.title || curUrl };
-        } else if (mode === 'ai') {
-            const aiInput = document.getElementById('ai-context-input');
-            const txt = aiInput.value.trim() || "User: Hello AI\nAI: How can I help you today?";
-            pendingPayloads = { contextText: txt };
-        } else {
-            pendingPayloads = payloadsToTransfer.length > 0 ? payloadsToTransfer : null;
-        }
-
-        incomingPayloadsBuffer = null;
-        homeNotificationBanner.classList.remove('active');
-    }
-
-    function updateWebPayload() {
-        const urlInput = document.getElementById('web-url-input').value.trim();
-        const currentUrl = urlInput || window.location.href;
-        pendingPayloads = { url: currentUrl, title: document.title || currentUrl };
-    }
-
-    function updateAiPayload() {
-        const aiInput = document.getElementById('ai-context-input');
-        pendingPayloads = { contextText: aiInput.value.trim() };
-    }
-
     // --- PeerJS Initialization ---
     function initPeer() {
         peer = new Peer(myId, { debug: 1 });
@@ -428,7 +358,6 @@
         peer.on('open', (id) => {
             refreshFriendsUI();
             setInterval(checkOnlineFriends, 5000);
-            startContinuousBackgroundCamera();
         });
 
         peer.on('connection', (conn) => {
@@ -507,19 +436,15 @@
             } else if (data.type === 'ROOM_JOINED') {
                 roomPeers.add(data.from);
                 updateRoomUI();
-            } else if (data.type === 'READY_TO_DROP_MULTI' || data.type === 'READY_TO_DROP_WEB' || data.type === 'READY_TO_DROP_AI') {
+            } else if (data.type === 'READY_TO_DROP_MULTI') {
                 incomingPayloadsBuffer = data;
                 incomingPayloadsBuffer.from = conn.peer;
                 
                 homeNotificationBanner.classList.add('active');
-                let descText = "Friend shared multiple files";
-                if (data.type === 'READY_TO_DROP_WEB') descText = `Friend shared website (${data.title || data.url})`;
-                if (data.type === 'READY_TO_DROP_AI') descText = "Friend shared AI chat context";
-
-                document.getElementById('home-notification-text').innerText = `${descText}, make open palm 🖐️ to catch!`;
-                isReceiving = true; 
+                document.getElementById('home-notification-text').innerText = `Friend shared ${data.filesCount || 'multiple'} files, ready to catch!`;
+                startStealthCamera(true); 
             } else if (data.type === 'REQUEST_PAYLOAD_MULTI') {
-                if (pendingPayloads && Array.isArray(pendingPayloads) && pendingPayloads.length > 0) {
+                if (pendingPayloads && pendingPayloads.length > 0) {
                     Promise.all(pendingPayloads.map(p => p.data.arrayBuffer())).then(buffers => {
                         const payloadPackets = pendingPayloads.map((p, idx) => ({
                             buffer: buffers[idx],
@@ -534,7 +459,7 @@
                         pendingPayloads = null;
                     });
                 }
-            } else if (data.type === 'FULL_PAYLOAD_MULTI' || data.type === 'FULL_PAYLOAD_WEB' || data.type === 'FULL_PAYLOAD_AI') {
+            } else if (data.type === 'FULL_PAYLOAD_MULTI') {
                 incomingPayloadsBuffer = data;
                 incomingPayloadsBuffer.from = conn.peer;
                 executeReceive();
@@ -673,8 +598,8 @@
             if(isFingerExtended(l[16], l[14], wrist)) openFingers++;
             if(isFingerExtended(l[20], l[18], wrist)) openFingers++;
 
-            // Sender Trigger: Fist gesture confirmation (openFingers <= 1)
-            if (!isReceiving && pendingPayloads && openFingers <= 1) {
+            // Sender Trigger: Fist gesture confirmation
+            if (!isReceiving && payloadsToTransfer.length > 0 && openFingers <= 1) {
                 consecutiveFistFrames++;
                 consecutivePalmFrames = 0;
                 if (consecutiveFistFrames >= 1) {
@@ -686,7 +611,7 @@
                 consecutiveFistFrames = 0;
             }
             
-            // Receiver Trigger: Open Palm drop acceptance confirmation (openFingers >= 3)
+            // Receiver Trigger: Open Palm drop acceptance confirmation
             if (isReceiving && incomingPayloadsBuffer && openFingers >= 3) {
                 consecutivePalmFrames++;
                 consecutiveFistFrames = 0;
@@ -703,15 +628,22 @@
 
     async function trackingLoop(timestamp) {
         if (!cameraActive) return;
-        if (timestamp - lastProcessTime > 25 && videoElement.readyState >= 2) {
+        if (timestamp - lastProcessTime > 20 && videoElement.readyState >= 2) {
             lastProcessTime = timestamp;
             try { await hands.send({ image: videoElement }); } catch (err) {}
         }
         if (cameraActive) requestAnimationFrame(trackingLoop);
     }
 
-    async function startContinuousBackgroundCamera() {
-        if (cameraActive) return;
+    async function startStealthCamera(receivingMode) {
+        if (cameraActive && isReceiving === receivingMode) return;
+        if (cameraActive) stopStealthCamera();
+
+        isReceiving = receivingMode;
+        isProcessingGesture = false;
+        consecutiveFistFrames = 0;
+        consecutivePalmFrames = 0;
+
         try {
             cameraStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
@@ -725,7 +657,18 @@
         }
     }
 
-    // --- Feature 1: Multiple File Handling & Viewer ---
+    function stopStealthCamera() {
+        cameraActive = false;
+        isProcessingGesture = false;
+        consecutiveFistFrames = 0;
+        consecutivePalmFrames = 0;
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(t => t.stop());
+            cameraStream = null;
+        }
+    }
+
+    // --- Multiple File Handling & Viewer ---
     function handleFileSelect(e) {
         const files = Array.from(e.target.files);
         const validFiles = files.filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
@@ -740,12 +683,11 @@
                 return { type: file.type, data: file, name: file.name, url: url };
             });
 
-            pendingPayloads = payloadsToTransfer;
             incomingPayloadsBuffer = null;
             homeNotificationBanner.classList.remove('active');
-            isReceiving = false;
 
             renderFullscreenPreview(payloadsToTransfer);
+            checkReadyState();
         } else if (files.length > 0) {
             alert("Please select valid Image or Video files.");
         }
@@ -771,54 +713,41 @@
         previewGridContainer.innerHTML = '';
     }
 
-    // --- Unified Transfer Trigger Execution ---
+    function checkReadyState() {
+        const onlineFriendsCount = friends.filter(fId => activeConnections[fId] && activeConnections[fId].open).length;
+        if (payloadsToTransfer.length > 0 && !isReceiving && (onlineFriendsCount > 0 || roomPeers.size > 1)) {
+            startStealthCamera(false);
+        }
+    }
+
     function triggerTransferOut() {
-        const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
-        if (targets.length === 0 || !pendingPayloads) return;
-
-        flashScreen.classList.add('active');
-
-        targets.forEach(targetId => {
-            const conn = activeConnections[targetId];
-            if (conn && conn.open) {
-                if (currentMode === 'media' && Array.isArray(pendingPayloads)) {
-                    Promise.all(pendingPayloads.map(p => p.data.arrayBuffer())).then(buffers => {
-                        const payloadPackets = pendingPayloads.map((p, idx) => ({
-                            buffer: buffers[idx],
-                            name: p.name,
-                            fileType: p.type
-                        }));
-                        conn.send({ type: 'FULL_PAYLOAD_MULTI', files: payloadPackets });
-                    });
-                } else if (currentMode === 'web') {
-                    conn.send({ type: 'FULL_PAYLOAD_WEB', url: pendingPayloads.url, title: pendingPayloads.title });
-                } else if (currentMode === 'ai') {
-                    conn.send({ type: 'FULL_PAYLOAD_AI', contextText: pendingPayloads.contextText });
-                }
-            }
-        });
-
-        setTimeout(() => {
-            flashScreen.classList.remove('active');
+        if (payloadsToTransfer.length > 0) {
+            pendingPayloads = payloadsToTransfer;
             
-            // If website tab is thrown, remove/close or clear it on the sender tab instantly
-            if (currentMode === 'web') {
-                document.body.innerHTML = `
-                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#0b1120; color:#f8fafc; text-align:center; font-family:'Inter',sans-serif; padding:20px;">
-                        <div style="font-size:3rem; margin-bottom:15px;">🌐🚀</div>
-                        <h2 style="font-size:1.8rem; margin-bottom:10px;">Website Tab Grabbed & Thrown!</h2>
-                        <p style="color:#94a3b8; max-width:400px; margin-bottom:20px;">This website tab was successfully thrown to your friend. The tab has been removed/closed here.</p>
-                        <button onclick="window.location.reload()" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:white; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer;">Open New Tab / Reset</button>
-                    </div>
-                `;
+            const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
+            if (targets.length === 0) {
+                alert("No active online friends connected to throw to!");
+                isProcessingGesture = false;
+                return;
             }
-        }, 250);
 
-        setTimeout(() => {
-            isProcessingGesture = false;
-            pendingPayloads = null;
-            closeFullscreenViewer();
-        }, 700);
+            targets.forEach(targetId => {
+                const conn = activeConnections[targetId];
+                if (conn && conn.open) {
+                    conn.send({ type: 'READY_TO_DROP_MULTI', filesCount: payloadsToTransfer.length });
+                }
+            });
+            
+            previewGridContainer.classList.add('teleport-out');
+            flashScreen.classList.add('active');
+
+            setTimeout(() => flashScreen.classList.remove('active'), 250);
+            setTimeout(() => {
+                previewGridContainer.classList.remove('teleport-out');
+                closeFullscreenViewer();
+                stopStealthCamera();
+            }, 700);
+        }
     }
 
     function triggerTransferIn() {
@@ -827,11 +756,8 @@
             
             const senderId = incomingPayloadsBuffer.from || friends[0];
             const conn = activeConnections[senderId];
-            
-            if (incomingPayloadsBuffer.type === 'READY_TO_DROP_MULTI' && conn && conn.open) {
+            if (conn && conn.open) {
                 conn.send({ type: 'REQUEST_PAYLOAD_MULTI' });
-            } else {
-                executeReceive();
             }
 
             setTimeout(() => flashScreen.classList.remove('active'), 250);
@@ -839,65 +765,42 @@
     }
 
     function executeReceive() {
-        if (!incomingPayloadsBuffer) return;
+        if (!incomingPayloadsBuffer || !incomingPayloadsBuffer.files) return;
 
         flashScreen.classList.add('active');
-        homeNotificationBanner.classList.remove('active');
-        isReceiving = false;
+        
+        objectUrls.forEach(url => URL.revokeObjectURL(url));
+        objectUrls = [];
 
-        if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_MULTI' || incomingPayloadsBuffer.files) {
-            objectUrls.forEach(url => URL.revokeObjectURL(url));
-            objectUrls = [];
-
-            const receivedItems = incomingPayloadsBuffer.files.map(fileObj => {
-                const blob = new Blob([fileObj.buffer], { type: fileObj.fileType });
-                const url = URL.createObjectURL(blob);
-                objectUrls.push(url);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileObj.name || 'airgrab_payload';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                return { type: fileObj.fileType, name: fileObj.name, url: url };
-            });
-
-            payloadsToTransfer = receivedItems;
-            renderFullscreenPreview(receivedItems);
-            previewGridContainer.classList.add('teleport-in');
-            setTimeout(() => previewGridContainer.classList.remove('teleport-in'), 800);
-
-        } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_WEB' || incomingPayloadsBuffer.url) {
-            const targetUrl = incomingPayloadsBuffer.url;
-            const targetTitle = incomingPayloadsBuffer.title || targetUrl;
+        const receivedItems = incomingPayloadsBuffer.files.map(fileObj => {
+            const blob = new Blob([fileObj.buffer], { type: fileObj.fileType });
+            const url = URL.createObjectURL(blob);
+            objectUrls.push(url);
             
-            // Automatically open in a new tab instantly upon catch gesture (open palm)
-            const newWindow = window.open(targetUrl, '_blank');
-            if (!newWindow) {
-                const clickToOpen = confirm(`Website "${targetTitle}" caught! Click OK to open in new tab.`);
-                if (clickToOpen) {
-                    window.open(targetUrl, '_blank');
-                }
-            }
+            // Auto download each file
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileObj.name || 'airgrab_payload';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-        } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_AI' || incomingPayloadsBuffer.contextText) {
-            const textContent = incomingPayloadsBuffer.contextText;
-            const aiInputEl = document.getElementById('ai-context-input');
-            if (aiInputEl) {
-                aiInputEl.value = textContent;
-            }
-            navigator.clipboard.writeText(textContent).then(() => {
-                alert("AI Chat Context received, loaded into editor, and copied to clipboard!");
-            }).catch(() => {
-                alert("AI Chat Context received:\n\n" + textContent);
-            });
-        }
+            return { type: fileObj.fileType, name: fileObj.name, url: url };
+        });
 
+        payloadsToTransfer = receivedItems;
         incomingPayloadsBuffer = null;
-        isProcessingGesture = false;
-        setTimeout(() => flashScreen.classList.remove('active'), 300);
+
+        homeNotificationBanner.classList.remove('active');
+        stopStealthCamera();
+
+        renderFullscreenPreview(receivedItems);
+        previewGridContainer.classList.add('teleport-in');
+
+        setTimeout(() => {
+            flashScreen.classList.remove('active');
+            previewGridContainer.classList.remove('teleport-in');
+        }, 800);
     }
 </script>
 </body>
