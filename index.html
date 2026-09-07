@@ -215,7 +215,7 @@
 
             <div class="hero-section">
                 <h2>Cross-Device<br><span class="gradient-text">Magic Transfer.</span></h2>
-                <p>Pair permanently. Seamlessly grab & throw Media Files, Active Websites, or live AI Chat Context across devices using hand gestures!</p>
+                <p>Pair permanently. Seamlessly grab & throw Media Files, Active Websites, or AI Chat Context across devices using hand gestures!</p>
             </div>
 
             <div class="features-row">
@@ -312,8 +312,9 @@
                     <!-- WEBSITE SHARE MODE CONTENT -->
                     <div id="mode-content-web" style="display: none; width: 100%; text-align: center;">
                         <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                        <h3>Grab & Throw Current Website Tab</h3>
-                        <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px;">Loading URL...</p>
+                        <h3>Grab & Throw Website Tab</h3>
+                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://example.com)" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
+                        <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px; font-size: 0.8rem;">Current URL loaded</p>
                         <button class="btn-gradient" onclick="prepareWebsiteThrow()">
                             Arm Tab for Throwing
                         </button>
@@ -322,8 +323,8 @@
                     <!-- AI CONTEXT SHARE MODE CONTENT -->
                     <div id="mode-content-ai" style="display: none; width: 100%; text-align: center;">
                         <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <h3>Grab & Throw Active AI Chat Context</h3>
-                        <p id="ai-status-hint" style="color: var(--text-muted); margin-bottom: 14px;">Scrapes ChatGPT/Gemini DOM text history seamlessly</p>
+                        <h3>Grab & Throw AI Chat Context</h3>
+                        <textarea id="ai-context-input" placeholder="Paste or type AI chat context here..." style="width: 100%; height: 75px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; color: white; font-size: 0.85rem; outline: none; resize: none; margin-bottom: 10px;"></textarea>
                         <button class="btn-gradient" onclick="prepareAiContextThrow()">
                             Arm AI Chat Context
                         </button>
@@ -397,11 +398,14 @@
         document.getElementById('mode-content-ai').style.display = mode === 'ai' ? 'block' : 'none';
 
         if (mode === 'web') {
-            document.getElementById('current-url-display').innerText = window.location.href;
+            const curUrl = window.location.href;
+            document.getElementById('current-url-display').innerText = curUrl;
+            document.getElementById('web-url-input').value = curUrl;
         }
 
         stopStealthCamera();
         payloadsToTransfer = [];
+        pendingPayloads = null;
         incomingPayloadsBuffer = null;
         homeNotificationBanner.classList.remove('active');
     }
@@ -413,7 +417,6 @@
         peer.on('open', (id) => {
             refreshFriendsUI();
             setInterval(checkOnlineFriends, 5000);
-            // Continuous background camera loop check for receiving mode across tabs
             startContinuousBackgroundCamera();
         });
 
@@ -503,9 +506,9 @@
                 if (data.type === 'READY_TO_DROP_AI') descText = "Friend shared AI chat context";
 
                 document.getElementById('home-notification-text').innerText = `${descText}, ready to catch with open palm!`;
-                isReceiving = true; // Ensure camera looks for open palm drop
+                isReceiving = true; 
             } else if (data.type === 'REQUEST_PAYLOAD_MULTI') {
-                if (pendingPayloads && pendingPayloads.length > 0) {
+                if (pendingPayloads && Array.isArray(pendingPayloads) && pendingPayloads.length > 0) {
                     Promise.all(pendingPayloads.map(p => p.data.arrayBuffer())).then(buffers => {
                         const payloadPackets = pendingPayloads.map((p, idx) => ({
                             buffer: buffers[idx],
@@ -660,7 +663,7 @@
             if(isFingerExtended(l[20], l[18], wrist)) openFingers++;
 
             // Sender Trigger: Fist gesture confirmation (openFingers <= 1)
-            if (!isReceiving && (payloadsToTransfer.length > 0 || pendingPayloads) && openFingers <= 1) {
+            if (!isReceiving && pendingPayloads && openFingers <= 1) {
                 consecutiveFistFrames++;
                 consecutivePalmFrames = 0;
                 if (consecutiveFistFrames >= 1) {
@@ -696,7 +699,6 @@
         if (cameraActive) requestAnimationFrame(trackingLoop);
     }
 
-    // Background constant camera to support cross-tab background receiving & throwing
     async function startContinuousBackgroundCamera() {
         if (cameraActive) return;
         try {
@@ -713,7 +715,7 @@
     }
 
     function stopStealthCamera() {
-        // Keep running in background if connections/incoming buffers exist, otherwise normal toggle
+        // Keep camera running for background receiving & throwing
     }
 
     // --- Feature 1: Multiple File Handling & Viewer ---
@@ -764,8 +766,10 @@
 
     // --- Feature 2: Website Sharing ---
     function prepareWebsiteThrow() {
-        const currentUrl = window.location.href;
+        const urlInput = document.getElementById('web-url-input').value.trim();
+        const currentUrl = urlInput || window.location.href;
         const currentTitle = document.title;
+        
         pendingPayloads = { url: currentUrl, title: currentTitle };
         isReceiving = false;
 
@@ -783,7 +787,7 @@
         targets.forEach(targetId => {
             const conn = activeConnections[targetId];
             if (conn && conn.open) {
-                conn.send({ type: 'READY_TO_DROP_WEB', title: currentTitle });
+                conn.send({ type: 'READY_TO_DROP_WEB', url: currentUrl, title: currentTitle });
             }
         });
 
@@ -793,19 +797,13 @@
         }, 700);
     }
 
-    // --- Feature 3: AI Context Sharing (ChatGPT / Gemini scraper parser) ---
+    // --- Feature 3: AI Context Sharing ---
     function prepareAiContextThrow() {
-        // Scrapes standard DOM elements used by ChatGPT and Gemini interfaces if active, or packages placeholder context
-        let extractedContext = "User: Hello AI\nAI: How can I help you today?";
+        const aiInput = document.getElementById('ai-context-input');
+        let extractedContext = aiInput ? aiInput.value.trim() : "";
         
-        const chatElements = document.querySelectorAll('div[data-message-author-role], .message-content, .query-content, .text-message');
-        if (chatElements.length > 0) {
-            let parsedLines = [];
-            chatElements.forEach(el => {
-                const role = el.getAttribute('data-message-author-role') || (el.classList.contains('query-content') ? 'user' : 'gemini');
-                parsedLines.push(`${role.toUpperCase()}: ${el.innerText.trim()}`);
-            });
-            extractedContext = parsedLines.join('\n\n');
+        if (!extractedContext) {
+            extractedContext = "User: Hello AI\nAI: How can I help you today?";
         }
 
         pendingPayloads = { contextText: extractedContext };
@@ -825,7 +823,7 @@
         targets.forEach(targetId => {
             const conn = activeConnections[targetId];
             if (conn && conn.open) {
-                conn.send({ type: 'READY_TO_DROP_AI' });
+                conn.send({ type: 'READY_TO_DROP_AI', contextText: extractedContext });
             }
         });
 
@@ -838,14 +836,14 @@
     // --- Unified Transfer Trigger Execution ---
     function triggerTransferOut() {
         const targets = roomPeers.size > 1 ? Array.from(roomPeers).filter(id => id !== myId) : friends.filter(fId => activeConnections[fId] && activeConnections[fId].open);
-        if (targets.length === 0) return;
+        if (targets.length === 0 || !pendingPayloads) return;
 
         flashScreen.classList.add('active');
 
         targets.forEach(targetId => {
             const conn = activeConnections[targetId];
             if (conn && conn.open) {
-                if (currentMode === 'media' && pendingPayloads) {
+                if (currentMode === 'media' && Array.isArray(pendingPayloads)) {
                     Promise.all(pendingPayloads.map(p => p.data.arrayBuffer())).then(buffers => {
                         const payloadPackets = pendingPayloads.map((p, idx) => ({
                             buffer: buffers[idx],
@@ -854,15 +852,23 @@
                         }));
                         conn.send({ type: 'FULL_PAYLOAD_MULTI', files: payloadPackets });
                     });
-                } else if (currentMode === 'web' && pendingPayloads) {
+                } else if (currentMode === 'web') {
                     conn.send({ type: 'FULL_PAYLOAD_WEB', url: pendingPayloads.url, title: pendingPayloads.title });
-                } else if (currentMode === 'ai' && pendingPayloads) {
+                } else if (currentMode === 'ai') {
                     conn.send({ type: 'FULL_PAYLOAD_AI', contextText: pendingPayloads.contextText });
                 }
             }
         });
 
-        setTimeout(() => flashScreen.classList.remove('active'), 250);
+        setTimeout(() => {
+            flashScreen.classList.remove('active');
+            if (currentMode === 'web') {
+                try {
+                    window.close();
+                } catch(e) {}
+            }
+        }, 250);
+
         setTimeout(() => {
             isProcessingGesture = false;
             pendingPayloads = null;
@@ -877,7 +883,6 @@
             const senderId = incomingPayloadsBuffer.from || friends[0];
             const conn = activeConnections[senderId];
             
-            // If explicit fetch needed for heavy multi-payloads
             if (incomingPayloadsBuffer.type === 'READY_TO_DROP_MULTI' && conn && conn.open) {
                 conn.send({ type: 'REQUEST_PAYLOAD_MULTI' });
             } else {
@@ -920,32 +925,17 @@
             setTimeout(() => previewGridContainer.classList.remove('teleport-in'), 800);
 
         } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_WEB' || incomingPayloadsBuffer.url) {
-            // Automatically open website tab
-            window.open(incomingPayloadsBuffer.url, '_blank');
-            alert(`Website Received & Opened: ${incomingPayloadsBuffer.title || incomingPayloadsBuffer.url}`);
+            const targetUrl = incomingPayloadsBuffer.url;
+            window.open(targetUrl, '_blank');
+            alert(`Website Received & Opened in New Tab: ${incomingPayloadsBuffer.title || targetUrl}`);
 
         } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_AI' || incomingPayloadsBuffer.contextText) {
-            // Automatically fill into active AI text input area (ChatGPT / Gemini textareas)
-            const textareas = document.querySelectorAll('textarea, div[contenteditable="true"], input[type="text"]');
-            let filled = false;
-            textareas.forEach(el => {
-                if (!filled) {
-                    if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
-                        el.value = incomingPayloadsBuffer.contextText;
-                    } else {
-                        el.innerText = incomingPayloadsBuffer.contextText;
-                    }
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                    filled = true;
-                }
+            const textContent = incomingPayloadsBuffer.contextText;
+            navigator.clipboard.writeText(textContent).then(() => {
+                alert("AI Context received and copied to clipboard successfully!");
+            }).catch(() => {
+                alert("AI Context received:\n\n" + textContent);
             });
-
-            if (!filled) {
-                navigator.clipboard.writeText(incomingPayloadsBuffer.contextText);
-                alert("AI Context copied to clipboard (no active chat text box found on page)!");
-            } else {
-                alert("AI Context successfully injected into chat typing area!");
-            }
         }
 
         incomingPayloadsBuffer = null;
