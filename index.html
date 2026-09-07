@@ -215,7 +215,7 @@
 
             <div class="hero-section">
                 <h2>Cross-Device<br><span class="gradient-text">Magic Transfer.</span></h2>
-                <p>Pair permanently. Seamlessly grab & throw Media Files, Active Websites, or AI Chat Context across devices using hand gestures!</p>
+                <p>Pair permanently. Seamlessly grab & throw Media Files, Active Websites (like YouTube tabs), or AI Chat Context across devices using hand gestures!</p>
             </div>
 
             <div class="features-row">
@@ -312,11 +312,11 @@
                     <!-- WEBSITE SHARE MODE CONTENT -->
                     <div id="mode-content-web" style="display: none; width: 100%; text-align: center;">
                         <svg class="upload-icon" width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                        <h3>Grab & Throw Website Tab</h3>
-                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://example.com)" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
-                        <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px; font-size: 0.8rem;">Current URL loaded</p>
+                        <h3>Grab & Throw Website Tab (e.g. YouTube)</h3>
+                        <input type="text" id="web-url-input" placeholder="Paste website URL (e.g. https://youtube.com/...)" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; color: white; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
+                        <p id="current-url-display" style="font-family: monospace; color: #818cf8; margin-bottom: 14px; word-break: break-all; padding: 0 10px; font-size: 0.8rem;">Current Tab URL loaded</p>
                         <button class="btn-gradient" onclick="prepareWebsiteThrow()">
-                            Arm Tab for Throwing
+                            Arm Tab for Throwing (Fist)
                         </button>
                     </div>
 
@@ -326,7 +326,7 @@
                         <h3>Grab & Throw AI Chat Context</h3>
                         <textarea id="ai-context-input" placeholder="Paste or type AI chat context here..." style="width: 100%; height: 75px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; color: white; font-size: 0.85rem; outline: none; resize: none; margin-bottom: 10px;"></textarea>
                         <button class="btn-gradient" onclick="prepareAiContextThrow()">
-                            Arm AI Chat Context
+                            Arm AI Chat Context (Fist)
                         </button>
                     </div>
                 </div>
@@ -403,7 +403,6 @@
             document.getElementById('web-url-input').value = curUrl;
         }
 
-        stopStealthCamera();
         payloadsToTransfer = [];
         pendingPayloads = null;
         incomingPayloadsBuffer = null;
@@ -502,7 +501,7 @@
                 
                 homeNotificationBanner.classList.add('active');
                 let descText = "Friend shared multiple files";
-                if (data.type === 'READY_TO_DROP_WEB') descText = "Friend shared a website tab";
+                if (data.type === 'READY_TO_DROP_WEB') descText = `Friend shared website (${data.title || data.url})`;
                 if (data.type === 'READY_TO_DROP_AI') descText = "Friend shared AI chat context";
 
                 document.getElementById('home-notification-text').innerText = `${descText}, ready to catch with open palm!`;
@@ -714,10 +713,6 @@
         }
     }
 
-    function stopStealthCamera() {
-        // Keep camera running for background receiving & throwing
-    }
-
     // --- Feature 1: Multiple File Handling & Viewer ---
     function handleFileSelect(e) {
         const files = Array.from(e.target.files);
@@ -768,7 +763,7 @@
     function prepareWebsiteThrow() {
         const urlInput = document.getElementById('web-url-input').value.trim();
         const currentUrl = urlInput || window.location.href;
-        const currentTitle = document.title;
+        const currentTitle = document.title || currentUrl;
         
         pendingPayloads = { url: currentUrl, title: currentTitle };
         isReceiving = false;
@@ -862,10 +857,17 @@
 
         setTimeout(() => {
             flashScreen.classList.remove('active');
+            
+            // If website tab is thrown, remove/close or clear it on the sender tab
             if (currentMode === 'web') {
-                try {
-                    window.close();
-                } catch(e) {}
+                document.body.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#0b1120; color:#f8fafc; text-align:center; font-family:'Inter',sans-serif; padding:20px;">
+                        <div style="font-size:3rem; margin-bottom:15px;">🚀</div>
+                        <h2 style="font-size:1.8rem; margin-bottom:10px;">Website Tab Grabbed & Thrown!</h2>
+                        <p style="color:#94a3b8; max-width:400px; margin-bottom:20px;">This tab's payload was successfully transferred to your friend and closed/removed here.</p>
+                        <button onclick="window.location.reload()" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:white; border:none; padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer;">Reset AirGrab</button>
+                    </div>
+                `;
             }
         }, 250);
 
@@ -926,15 +928,28 @@
 
         } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_WEB' || incomingPayloadsBuffer.url) {
             const targetUrl = incomingPayloadsBuffer.url;
-            window.open(targetUrl, '_blank');
-            alert(`Website Received & Opened in New Tab: ${incomingPayloadsBuffer.title || targetUrl}`);
+            const targetTitle = incomingPayloadsBuffer.title || targetUrl;
+            
+            // Automatically open in a new tab instantly upon catch
+            const newWindow = window.open(targetUrl, '_blank');
+            if (!newWindow) {
+                // Fallback if popup blocker intervenes
+                const clickToOpen = confirm(`Website "${targetTitle}" caught! Click OK to open in new tab.`);
+                if (clickToOpen) {
+                    window.open(targetUrl, '_blank');
+                }
+            }
 
         } else if (incomingPayloadsBuffer.type === 'FULL_PAYLOAD_AI' || incomingPayloadsBuffer.contextText) {
             const textContent = incomingPayloadsBuffer.contextText;
+            const aiInputEl = document.getElementById('ai-context-input');
+            if (aiInputEl) {
+                aiInputEl.value = textContent;
+            }
             navigator.clipboard.writeText(textContent).then(() => {
-                alert("AI Context received and copied to clipboard successfully!");
+                alert("AI Chat Context received, loaded into editor, and copied to clipboard!");
             }).catch(() => {
-                alert("AI Context received:\n\n" + textContent);
+                alert("AI Chat Context received:\n\n" + textContent);
             });
         }
 
